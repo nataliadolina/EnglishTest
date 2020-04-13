@@ -140,7 +140,6 @@ def add_task(title):
             form.correct.data = correct_choice
     elif request.method == 'POST':
         text = form.text.data
-        # picture = form.picture.data
         picture = None
         '''
         if allowed_file(f.filename):
