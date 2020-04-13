@@ -34,7 +34,7 @@ def registration():
         elif f2 != form.repeatpassword.data:
             form.password.data = ''
             return render_template('registration.html',
-                                   text='Введёенные вами пароли различаются. Пожалуйста, проверьте написание', form=form)
+                                   text='Введённые вами пароли различаются. Пожалуйста, проверьте написание', form=form)
         else:
             session['username'] = form.username.data
             users_base.insert(form.username.data, form.password.data, form.email.data)
