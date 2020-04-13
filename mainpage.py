@@ -75,6 +75,7 @@ def return_to_mainpage():
 def show_all():
     session["warning"] = 'Вы не можете повторно добавить задание, которое у вас уже есть.'
     all_tasks = tasks_model.get_all()
+    all_tasks.reverse()
     session["all_titles"] = []
     session['all_contents'] = []
     session['all_ides'] = []
@@ -112,7 +113,7 @@ def tasks():
     if 'username' in session:
         if 'list_id' not in session:
             session['list_id'] = 0
-        return redirect('/all_tasks/{}'.format(session['list_id']))
+        return redirect('/all_tasks/{}'.format(session['user_id']))
     else:
         return redirect('/login')
 
