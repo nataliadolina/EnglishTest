@@ -89,7 +89,11 @@ def show_all():
     for task in all_tasks:
         id, text, picture, links, hints, title, content, choices, correct_choices = task
         session['all_titles'].append(title)
-        cat = all_cats.get(id)[1]
+        cats = cat_model.get(id)
+        if cats:
+            cat = cats[1]
+        else:
+            cat = None
         if cat:
             session["all_cats"].append(cat)
         else:
@@ -383,7 +387,7 @@ def task(id):
                     flag = True
                     hint = hints[i]
             finally:
-                if ans in [i.strip() in ans1.split("//")]:
+                if ans in [i.strip() for i in ans1.split("//")]:
                     num_correct += 1
                     correctness += ' ' + 'true'
                 else:

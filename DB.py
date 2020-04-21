@@ -72,7 +72,7 @@ class CategoryModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS task')
+        #cursor.execute('DROP TABLE IF EXISTS cat')
         cursor.execute('''CREATE TABLE IF NOT EXISTS cat
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      task_id INTEGER,
@@ -100,7 +100,7 @@ class CategoryModel:
 
     def get(self, id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM task WHERE task_id = ?", (id,))
+        cursor.execute("SELECT * FROM cat WHERE task_id = ?", str(id,))
         row = cursor.fetchone()
         return row
 
