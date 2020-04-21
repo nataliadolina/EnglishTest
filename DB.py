@@ -66,6 +66,57 @@ class UsersModel:
         cursor.execute('''DELETE FROM users''')
 
 
+class CategoryModel:
+    def __init__(self, connection):
+        self.connection = connection.get_connection()
+
+    def init_table(self):
+        cursor = self.connection.cursor()
+        # cursor.execute('DROP TABLE IF EXISTS task')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS cat
+                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                     task_id INTEGER,
+                                    category_name VARCHAR(1000)
+                             )''')
+        cursor.close()
+        self.connection.commit()
+
+    def get_connection(self):
+        return self.connection
+
+    def insert(self, task_id, category_name):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO cat
+                          (task_id, category_name) 
+                          VALUES (?,?)''', (task_id, category_name))
+        cursor.close()
+        self.connection.commit()
+
+    def update_cat(self, cat, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('UPDATE cat SET category_name=? WHERE task_id=?,', (cat, str(task_id, )))
+        cursor.close()
+        self.connection.commit()
+
+    def get(self, id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM task WHERE task_id = ?", (id,))
+        row = cursor.fetchone()
+        return row
+
+    def get_all(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM cat")
+        rows = cursor.fetchall()
+        return rows
+
+    def delete(self, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM cat WHERE task_id = ?''', (str(task_id),))
+        cursor.close()
+        self.connection.commit()
+
+
 class TasksModel:
     def __init__(self, connection):
         self.connection = connection.get_connection()

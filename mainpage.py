@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, request, session, url_for
 from werkzeug.utils import redirect, secure_filename
-from DB import DB, UsersModel, TasksModel, ProgresssModel, TaskUser
+from DB import DB, UsersModel, TasksModel, ProgresssModel, TaskUser, CategoryModel
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
 import webbrowser
 
@@ -19,6 +19,8 @@ tasks_model.init_table()
 all_users = users_base.get_all()
 task_user = TaskUser(base)
 task_user.init_table()
+cat_model = CategoryModel(base)
+cat_model.init_table()
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -30,7 +32,8 @@ def registration():
         if exists[0]:
             form.username.data = ''
             return render_template('registration.html',
-                                   text='Пользователь с таким именем уже существует. Пожалуйста, смените пароль', form=form)
+                                   text='Пользователь с таким именем уже существует. Пожалуйста, смените логин',
+                                   form=form)
         elif f2 != form.repeatpassword.data:
             form.password.data = ''
             return render_template('registration.html',
@@ -75,14 +78,22 @@ def return_to_mainpage():
 def show_all():
     session["warning"] = 'Вы не можете повторно добавить задание, которое у вас уже есть.'
     all_tasks = tasks_model.get_all()
+    all_cats = cat_model.get_all()
     all_tasks.reverse()
     session["all_titles"] = []
+    session['all_cats'] = []
+    session["unique_cats"] = list(set([i[1] for i in cat_model.get_all()]))
     session['all_contents'] = []
     session['all_ides'] = []
     all = len(all_tasks)
     for task in all_tasks:
         id, text, picture, links, hints, title, content, choices, correct_choices = task
         session['all_titles'].append(title)
+        cat = all_cats.get(id)[1]
+        if cat:
+            session["all_cats"].append(cat)
+        else:
+            session['all_cats'].append("")
         if content:
             session['all_contents'].append(content.split("\n")[0])
         else:
@@ -127,7 +138,8 @@ def add_task(title):
     title = int(title)
     if request.method == 'GET':
         if int(title) != -1:
-            text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(session['task_id'][title])[1:]
+            text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(
+                session['task_id'][title])[1:]
             users_ides = [i[-1] for i in task_user.get_by_task(session['task_id'][title])]
             for i in users_ides:
                 users.append(users_base.get(i)[1])
@@ -238,6 +250,7 @@ def all_tasks(id):
     session['links'] = []
     session['whattounderline'] = []
     session['splitedcontents'] = []
+    session['cat'] = []
     arr1 = []
     all1 = set()
     for i in all:
@@ -370,7 +383,7 @@ def task(id):
                     flag = True
                     hint = hints[i]
             finally:
-                if ans == ans1:
+                if ans in [i.strip() in ans1.split("//")]:
                     num_correct += 1
                     correctness += ' ' + 'true'
                 else:
