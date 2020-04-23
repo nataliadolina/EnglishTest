@@ -16,7 +16,7 @@
         {%if session['user_id']%}
         {%if session['user_id'] in [1, 2]%}
         <a href="/deletefromdb/{{session['all_ides'][i]}}" class="btn btn-light">Удалить</a>
-        <a href="/add_task/{{session['all_ides'][i]}}" class="btn btn-light">Редактировать</a>
+        <a href="/add_task/-2/{{session['all_ides'][i]}}" class="btn btn-light">Редактировать</a>
         {% endif %}
         <a href="/add_to_user/{{session['all_ides'][i]}}" class="btn btn-light">Добавить к себе</a>
         {%else%}

@@ -45,7 +45,7 @@ body {
                         {% if "username" in session %}
                         <li><a class="navbar-brand" href="/homepage"><h5>Моя страница</h5></a></li>
                         {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                        <li><a class="navbar-brand" href="/add_task/-1"><h5>Добавить задание</h5></a></li>
+                        <li><a class="navbar-brand" href="/add_task/-1/-1"><h5>Добавить задание</h5></a></li>
                         <li><a class="navbar-brand" href="/all_users"><h5>Все пользователи</h5></a></li>
                         {% endif %}
                         <li><a class="navbar-brand" href="/logout"><h5>{{session['username']}}</h5></a></li>

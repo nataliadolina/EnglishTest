@@ -76,6 +76,7 @@ def return_to_mainpage():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/mainpage', methods=['GET', 'POST'])
 def show_all():
+    print(tasks_model.get_all())
     session["warning"] = 'Вы не можете повторно добавить задание, которое у вас уже есть.'
     all_tasks = tasks_model.get_all()
     all_cats = cat_model.get_all()
@@ -133,18 +134,24 @@ def tasks():
         return redirect('/login')
 
 
-@app.route('/add_task/<string:title>', methods=['GET', 'POST'])
-def add_task(title):
+@app.route('/add_task/<string:title>/<string:id>', methods=['GET', 'POST'])
+def add_task(title, id):
     if 'username' not in session:
         return redirect('/login')
     form = AddTaskForm()
     users = []
     title = int(title)
+    users_ides = []
+    text, links, hints, title1, content, choices, correct_choice = "", "", "", "", "", "", ""
     if request.method == 'GET':
-        if int(title) != -1:
-            text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(
-                session['task_id'][title])[1:]
-            users_ides = [i[-1] for i in task_user.get_by_task(session['task_id'][title])]
+        if title != -1 or title == -2:
+            if title != -1 and title != -2:
+                text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(
+                    session['task_id'][title])[1:]
+                users_ides = [i[-1] for i in task_user.get_by_task(session['task_id'][title])]
+            elif title == -2:
+                text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(id)[1:]
+                users_ides = [i[-1] for i in task_user.get_by_task(id)]
             for i in users_ides:
                 users.append(users_base.get(i)[1])
             form.text.data = text
@@ -170,8 +177,8 @@ def add_task(title):
         links = form.links.data
         title1 = form.title.data
         sentence = form.sentence.data
-        choice = form.choice.data
-        correct = form.correct.data
+        choice = form.choice.data.strip()
+        correct = form.correct.data.strip()
         hints = form.hints.data.strip()
         '''
         if (len(sentence.split('\n')) != len(choice.split('\n')) or len(correct.split('\n')) != len(
@@ -345,7 +352,7 @@ def task(id):
     num_correct = 0
     l = len(session['contents'][id])
     length = list(range(l))
-    answers = ''
+    answer = ''
     correctness = ''
     choices = []
     task_id = session['task_id'][id]
@@ -353,7 +360,7 @@ def task(id):
     c = []
     ides = []
     k = -1
-    answer = []
+    answers = []
     hint_given = []
     if session['links']:
         links = session['links'][id]
@@ -362,12 +369,16 @@ def task(id):
     picture = session['picture'][id]
     text = session["text"][id]
     if correct:
-        answer = correct[0][4].split()
+        answer = correct[0][4].split("//")
         c = correct[0][-3].split()
         hint_given = list(map(int, correct[0][1].split()))
     if session['choices']:
         choices = session['choices'][id]
+        for i in choices:
+            for j in i:
+                j = j.replace(" ", "%20")
     if request.method == 'POST':
+        answer = ''
         try:
             ides = [i[-2] for i in correct]
         except IndexError:
@@ -378,7 +389,12 @@ def task(id):
         flag = False
         hint = ''
         for i in length:
-            ans = request.form[str(i)]
+            ans = str(request.form[str(i)])
+            if answer:
+                answer += "//" + ans
+            else:
+                answer += ans
+            print(ans)
             try:
                 ans1 = session['correct'][id][i].strip()
             except Exception as e:
@@ -387,7 +403,7 @@ def task(id):
                     flag = True
                     hint = hints[i]
             finally:
-                if ans in [i.strip() for i in ans1.split("//")]:
+                if ans.lower() in [i.strip().lower() for i in ans1.split("//")]:
                     num_correct += 1
                     correctness += ' ' + 'true'
                 else:
@@ -396,27 +412,27 @@ def task(id):
                         if len(hints) >= i + 1:
                             hint = hints[i]
                     correctness += ' ' + 'false'
-            answers += " " + ans
         corr = correctness.split()
         num_incor = []
         for i in range(len(corr)):
             if corr[i].strip() == 'false':
                 num_incor.append(str(i))
         if task_id in ides:
-            progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
+            progress.update(l, num_correct, answer, correctness, task_id, session['list_id'])
             current = set(progress.get_all(session['list_id'], task_id)[0][1].split())
             hint_given1 = list(current | set(num_incor))
             progress.set_hint(task_id, session['list_id'], ' '.join(hint_given1))
         else:
-            progress.insert(l, num_correct, answers, correctness, task_id, session['list_id'])
+            progress.insert(l, num_correct, answer, correctness, task_id, session['list_id'])
             progress.set_hint(task_id, session['list_id'], ' '.join(num_incor))
         correct = progress.get_all(session['list_id'], task_id)
         c = correct[0][-3]
+        print(answer)
         hint_given = list(map(int, correct[0][1].split()))
         if correct:
             c = correct[0][-3].split()
             if len(correct[0]) >= 2:
-                answer = correct[0][4].split()
+                answer = [i.strip() for i in correct[0][4].split("//")]
         else:
             answer = []
         if hint:

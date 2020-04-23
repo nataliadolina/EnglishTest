@@ -17,7 +17,7 @@
             <p class="card-text">{{session['scores'][i]}}</p>
             {% if session['user_id'] == 1 or session['user_id'] == 2 %}
             <a href="/delete/{{i}}" class="btn btn-light">Удалить</a>
-            <a href="/add_task/{{i}}" class="btn btn-light">Редактировать</a>
+            <a href="/add_task/{{i}}/-1" class="btn btn-light">Редактировать</a>
             {% endif %}
             <a href="/task/{{i}}" class="btn btn-light">Выполнить</a>
             </div>
@@ -32,7 +32,7 @@
                     <p class="card-text">{{session['scores'][i+1]}}</p>
                     {% if session['user_id'] == 1 or session['user_id'] == 2 %}
                     <a href="/delete/{{i+1}}" class="btn btn-light">Удалить</a>
-                    <a href="/add_task/{{i+1}}" class="btn btn-light">Редактировать</a>
+                    <a href="/add_task/{{i+1}}/-1" class="btn btn-light">Редактировать</a>
                     {% endif %}
                     <a href="/task/{{i+1}}" class="btn btn-light">Выполнить</a>
                     </div>
@@ -49,7 +49,7 @@
                     <p class="card-text">{{session['scores'][i+2]}}</p>
                     {% if session['user_id'] == 1 or session['user_id'] == 2 %}
                     <a href="/delete/{{i+2}}" class="btn btn-light">Удалить</a>
-                    <a href="/add_task/{{i+2}}" class="btn btn-light">Редактировать</a>
+                    <a href="/add_task/{{i+2}}/-1" class="btn btn-light">Редактировать</a>
                     {% endif %}
                     <a href="/task/{{i+2}}" class="btn btn-light">Выполнить</a>
                     </div>
