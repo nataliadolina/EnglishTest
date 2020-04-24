@@ -245,6 +245,12 @@ class ProgresssModel:
         cursor.close()
         self.connection.commit()
 
+    def delete_by_task_id(self, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM prog WHERE task_id = ?''', (str(task_id),))
+        cursor.close()
+        self.connection.commit()
+
 
 class TaskUser:
     def __init__(self, connection):

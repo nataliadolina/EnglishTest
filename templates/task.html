@@ -3,6 +3,7 @@
 
 <style>
 select {
+    white-space: pre;
    -webkit-appearance: button;
     -moz-appearance: button;
     -webkit-padding-end: 20px;
@@ -22,7 +23,17 @@ select {
     white-space: nowrap;
 
 }
-
+option {
+  white-space: pre;
+}
+.container-my {
+    max-width: 1260px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+}
 </style>
 <form method="post">
 <div class="container">
@@ -51,7 +62,7 @@ select {
                       <circle cx="8" cy="8" r="8"/>
                     </svg>
                     <div class="col item">
-                        <div class="col-2 item">
+                        <div class="col-lg">
                             <h5>{{session['contents'][i][j]}}</h5>
                         </div>
                     </div>
@@ -64,7 +75,7 @@ select {
                       <circle cx="8" cy="8" r="8"/>
                     </svg>
                     <div class="col item">
-                        <div class="col-2 item">
+                        <div class="col-lg">
                             <h5>{{session['contents'][i][j]}}</h5>
                         </div>
                     </div>
@@ -79,7 +90,7 @@ select {
                       <circle cx="8" cy="8" r="8"/>
                     </svg>
                     <div class="col item">
-                        <div class="col-2 item">
+                        <div class="col-lg">
                             <h5>{{session['contents'][i][j]}}</h5>
                         </div>
                     </div>
@@ -87,24 +98,32 @@ select {
                 </div>
             {% endif %}
             {%else%}
-            <h5>{{session['contents'][i][j]}}</h5>
+            <div class="container">
+                <div class="row">
+                    <div class="col item">
+                        <div class="col-lg">
+                            <h5>{{session['contents'][i][j]}}</h5>
+                        </div>
+                    </div>
+                </div>
+                </div>
             {%endif%}
             <div class="container">
                 <div class="row">
-                    {{'Ответ:'}},
+                    {{'Ответ:'}}
             <div class="col item">
                 <div class="col-2 item">
                     {% if choices[j]%}
                     <select class="dropdown" name={{j}}>
-                        {%for element1 in choices[j]%}
+                        {%for h in length_of_choices[j]%}
                         {%if answer%}
-                        {%if element1 == answer[j]%}
-                        <option selected value={{answer[j]}}>{{element1}}</option>
+                        {%if choices[j][h] == answer[j]%}
+                        <option selected value={{values[j][h]}}>{{choices[j][h]}}</option>
                         {%else%}
-                        <option value={{element1}}>{{element1}}</option>
+                        <option value={{values[j][h]}}>{{choices[j][h]}}</option>
                         {%endif%}
                         {%else%}
-                        <option value={{element1}}>{{element1}}</option>
+                        <option value={{values[j][h]}}>{{choices[j][h]}}</option>
                         {%endif%}
                         {%endfor%}
                     </select>
