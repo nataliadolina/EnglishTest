@@ -77,7 +77,6 @@ def return_to_mainpage():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/mainpage', methods=['GET', 'POST'])
 def show_all():
-    print(tasks_model.get_all())
     session["warning"] = 'Вы не можете повторно добавить задание, которое у вас уже есть.'
     all_tasks = tasks_model.get_all()
     all_cats = cat_model.get_all()
@@ -145,7 +144,6 @@ def add_task(title, id):
     users_ides = []
     text, links, hints, title1, content, choices, correct_choice = "", "", "", "", "", "", ""
     if request.method == 'GET':
-        print(session['task_id'])
         if title != -1 or title == -2:
             if title != -1 and title != -2:
                 text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(
@@ -345,7 +343,6 @@ def delete_tasks(id):
     # if id not in [i[1] for i in task_user.get_all()]:
     # tasks_model.delete(id)
     progress.delete(session["task_id"][id], session['list_id'])
-    print(session['task_id'])
     if task_user.get_by_task(session['task_id'][id]):
         task_user.delete(session['task_id'][id], session['list_id'])
     return redirect('/all_tasks/{}'.format(session['list_id']))
@@ -377,7 +374,6 @@ def task(id):
     ides = []
     k = -1
     length_of_choices = []
-    print(session['task_id'])
     values = []
     hint_given = []
     if session['links']:
@@ -400,7 +396,6 @@ def task(id):
                 choices[i][j] = choices[i][j].replace("\r", '')
                 values[i][j] = values[i][j].replace("\r", '')
                 values[i][j] = values[i][j].replace(" ", "==")
-    print(choices)
     if request.method == 'POST':
         answer = ''
         try:
@@ -418,7 +413,6 @@ def task(id):
                 answer += "//" + ans
             else:
                 answer += ans
-            print(ans)
             try:
                 ans1 = correct_answers[i].strip()  # получили правильный ответ
             except Exception as e:
@@ -452,7 +446,6 @@ def task(id):
             progress.set_hint(task_id, session['list_id'], ' '.join(num_incor))
         correct = progress.get_all(session['list_id'], task_id)
         # c = correct[0][-3]  # правильность выполнения
-        print(answer)
         hint_given = list(map(int, correct[0][1].split()))  # все задания не выполненные с первого раза
         if correct:
             c = correct[0][-3].split()
