@@ -113,7 +113,7 @@ option {
                     {{'Ответ:'}}
             <div class="col item">
                 <div class="col-2 item">
-                    {% if choices[j]%}
+                    {% if choices[j] and choices[j]!=['']%}
                     <select class="dropdown" name={{j}}>
                         {%for h in length_of_choices[j]%}
                         {%if answer%}

@@ -249,7 +249,7 @@ def all_tasks(id):
     all, username = '', ''
     if 'username' not in session:
         return redirect('/login')
-    if id != 0 and session['user_id'] in [1, 2 ]:
+    if id != 0 and session['user_id'] in [1, 2]:
         all = [i[1] for i in task_user.get_all(id)]
         # print(users_base.get_all())
         username = users_base.get(id)[1]
@@ -335,7 +335,6 @@ def all_tasks(id):
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
     n = list(range(0, len(all), 3))
-    print(session['task_id'])
     return render_template('tasks.html', flag=True, n=n, all=all, n_all=len(all), name=username)
 
 
@@ -397,6 +396,7 @@ def task(id):
         for i in range(len(choices)):
             length_of_choices.append(list(range(0, len(choices[i]))))
             for j in range(len(choices[i])):
+                choices[i][j] = choices[i][j].strip()
                 choices[i][j] = choices[i][j].replace("\r", '')
                 values[i][j] = values[i][j].replace("\r", '')
                 values[i][j] = values[i][j].replace(" ", "==")
@@ -413,7 +413,7 @@ def task(id):
         flag = False
         hint = ''
         for i in length:
-            ans = str(request.form[str(i)]).replace("==", " ")
+            ans = str(request.form[str(i)]).replace("==", " ").lower().strip()
             if answer:
                 answer += "//" + ans
             else:
@@ -427,7 +427,8 @@ def task(id):
                     flag = True
                     hint = hints[i]
             else:
-                if ans.lower() in [i.strip().lower() for i in ans1.split("//")]:
+                correct_answer = [i.strip().lower() for i in ans1.split("//")]
+                if ans in correct_answer:
                     num_correct += 1
                     correctness += ' ' + 'true'
                 else:
@@ -456,7 +457,6 @@ def task(id):
         if correct:
             c = correct[0][-3].split()
             answer = [i.strip() for i in correct[0][4].split("//")]
-            print(choices)
         else:
             answer = []
         if hint:
